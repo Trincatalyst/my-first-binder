@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Local Data Analyzer</title>
+  <link rel="stylesheet" href="https://pyscript.net/releases/2024.6.1/core.css">
+  <script type="module" src="https://pyscript.net/releases/2024.6.1/core.js"></script>
+</head>
+<body>
+  <h1>🔍 Local Data Analyzer</h1>
+  <p>Upload your CSV file below — all processing happens in your browser (no uploads!)</p>
+
+  <input type="file" id="fileInput" accept=".csv" />
+  <pre id="output"></pre>
+
+  <py-script>
+import js, io, pandas as pd
+
+file_input = js.document.getElementById("fileInput")
+output = js.document.getElementById("output")
+
+def handle_file(event):
+    file = event.target.files.item(0)
+    text = js.FileReader.new()
+    def onload(_):
+        csv_text = text.result
+        df = pd.read_csv(io.StringIO(csv_text))
+        summary = df.describe().to_string()
+        output.textContent = summary
+    text.onload = onload
+    text.readAsText(file)
+
+file_input.addEventListener("change", handle_file)
+  </py-script>
+</body>
+</html>
